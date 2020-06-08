@@ -17,13 +17,16 @@ router.get('/messages/admin1', authCheck([Roles.admin,Roles.siteAdmin]), message
 
 
 // GET /api/users
-router.get('/users', authCheck([Roles.admin,Roles.siteAdmin]), userController.list);
+router.get('/users', authCheck([Roles.admin,Roles.siteAdmin, Roles.user]), userController.list);
 
 // GET /api/users/:id
 router.get('/users/:id', authCheck([Roles.siteAdmin]), userController.find);
 
 // DELETE /api/users/:id
 router.delete('/users/:id', authCheck([Roles.siteAdmin]), userController.destroy);
+
+// DELETE many /api/users/:id
+router.delete('/users/ids/:ids', authCheck(), userController.destroys);
 
 // PUT /api/users
 router.put('/users', authCheck([Roles.siteAdmin]), userController.updateUser);

@@ -80,12 +80,29 @@ exports.destroy = function(req, res, next) {
   });
 };
 
+// DELETE many User /api/users/:id -> id = [ids]
+exports.destroys = function(req, res, next) {
+
+  User.deleteMany({_id:{$in: req.params.ids}}, (err, user) => {
+    if (err || !user) {
+      if (err) console.log(err);
+      return res.status(404).json({
+        success: false,
+        errors: [ err ? err.message : `user id '${req.params.id} not found'` ]
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: user
+    });
+  });
+};
+
 
 // PUT /api/users/profile/password
 // User changing thier profile password - auth priveledges
 exports.updateProfilePassword = function(req, res, next) {
-  console.log("===dyt con me may===", req.body);
-  console.log("===headers.authorization===", req.headers.authorization);
   if (!req.body.user || typeof req.body.user !== 'object') {
     return res.status(409).json({ success: false, errors: ['\'user\' param is required'] });
   }
