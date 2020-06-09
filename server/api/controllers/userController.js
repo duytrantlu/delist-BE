@@ -10,8 +10,8 @@ exports.list = function(req, res, next) {
 
   const pageOptions = {
     page: req.query['page'] || 1,
-    limit: req.query['limit'] || 1000,
-    sort: req.query['sort'] || 'name asc'
+    limit: req.query['limit'] || 5000,
+    sort: req.query['sort'] || {updatedAt: -1}
   };
 
   let filterOptions = {};
