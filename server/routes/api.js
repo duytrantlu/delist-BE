@@ -34,6 +34,9 @@ router.put('/users', authCheck([Roles.siteAdmin]), userController.updateUser);
 // PUT /api/users/password
 router.put('/users/password', authCheck([Roles.siteAdmin]), userController.updatePassword);
 
+// PUT /api/users/role
+router.put('/users/role', authCheck(), userController.updateRole);
+
 // PUT /api/users/profile
 router.put('/users/profile', authCheck(), userController.updateProfile);
 

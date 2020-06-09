@@ -144,6 +144,43 @@ exports.updatePassword = function(req, res, next) {
 };
 
 
+// PUT /api/users/role
+// SiteAdmin changing user role - SiteAdmin privelege
+exports.updateRole = function(req, res, next) {
+  if (!req.body.user || typeof req.body.user !== 'object') {
+    return res.status(409).json({ success: false, errors: ['\'user\' param is required'] });
+  }
+
+  saveRole(req.body.user.id, req.body.user.role, (err2, data) => {
+    if (err2) {
+      if (err2) console.log(err2);
+      return res.status(409).json({ success: false, errors: [err2.message] });
+    }
+
+    return res.json({ success: true });
+  });
+};
+
+function saveRole(userId, role, callback) {
+  if (typeof role === 'string') {
+    role = role.trim();
+    if (!Roles.isValidRole(role))
+      return callback(new Error(`role '${role}' is not a valid role`));
+  } else {
+    return callback(new Error('role is required'));
+  }
+  const user = { role };
+  User.findOneAndUpdate({ _id: userId }, user, (err2, data) => {
+    if (err2) {
+      console.log(err2);
+      return callback(err2);
+    }
+
+    return callback(null, data);
+  });;
+}
+
+
 // PUT /api/users
 exports.updateUser = function(req, res, next) {
   if (!req.body.user || typeof req.body.user !== 'object') {
@@ -195,8 +232,6 @@ exports.updateProfile = function(req, res, next) {
 
 
 function savePassword(userId, password, callback) {
-  console.log("=userId==", userId);
-  console.log("=password==", password);
   password = password.trim();
   if (password.length < validations.password.minLength.value)
     return callback(validations.password.minLength.message);
