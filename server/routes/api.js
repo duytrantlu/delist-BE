@@ -5,6 +5,7 @@ const Roles = require('../../src/shared/roles');
 
 const messageController = require('../api/controllers/messageController');
 const userController = require('../api/controllers/userController');
+const storeController = require('../api/controllers/storeController');
 
 // GET /api/messages/public1
 router.get('/messages/public1', messageController.getPublicMessage1);
@@ -42,5 +43,14 @@ router.put('/users/profile', authCheck(), userController.updateProfile);
 
 // PUT /api/users/profile/password
 router.put('/users/profile/password', authCheck(), userController.updateProfilePassword);
+
+// GET /api/stores
+router.get('/stores',authCheck(), storeController.list);
+
+// POST /apu/stores
+router.post('/stores',authCheck(), storeController.create);
+
+// PUT /api/store
+router.put('/stores', authCheck(), storeController.updateStore);
 
 module.exports = router;

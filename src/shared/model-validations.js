@@ -12,5 +12,11 @@ module.exports = {
       value: /^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$/i,
       message: 'Usernmae is not valid.'
     }
+  },
+  storeUrl: {
+    regex: {
+      value: /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:\/?#[\]@!\$&'\(\)\*\+,;=.]+$/gm,
+      message: 'Url is not valid.'
+    }
   }
 };

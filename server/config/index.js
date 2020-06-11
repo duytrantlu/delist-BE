@@ -9,5 +9,5 @@ module.exports = {
   jwtSecret: '!!secret phrase!!',
 
   // Model validations
-  validations // :validations
+  validations, // :validations
 };
