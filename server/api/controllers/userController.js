@@ -82,13 +82,14 @@ exports.destroy = function(req, res, next) {
 
 // DELETE many User /api/users/:id -> id = [ids]
 exports.destroys = function(req, res, next) {
+  const {ids} = req.params;
 
-  User.deleteMany({_id:{$in: req.params.ids}}, (err, user) => {
+  User.deleteMany({_id:{$in: ids.split(',')}}, (err, user) => {
     if (err || !user) {
       if (err) console.log(err);
       return res.status(404).json({
         success: false,
-        errors: [ err ? err.message : `user id '${req.params.id} not found'` ]
+        errors: [ err ? err.message : `user id '${req.params.ids} not found'` ]
       });
     }
 
@@ -255,7 +256,6 @@ function savePassword(userId, password, callback) {
 }
 
 function updateUser(user, callback) {
-
   validateUser(user, (errValdation, u) => {
     if (errValdation) return callback (errValdation);
 

@@ -6,6 +6,7 @@ const Roles = require('../../src/shared/roles');
 const messageController = require('../api/controllers/messageController');
 const userController = require('../api/controllers/userController');
 const storeController = require('../api/controllers/storeController');
+const wooController = require('../api/controllers/wooHooks');
 
 // GET /api/messages/public1
 router.get('/messages/public1', messageController.getPublicMessage1);
@@ -52,5 +53,11 @@ router.post('/stores',authCheck(), storeController.create);
 
 // PUT /api/store
 router.put('/stores', authCheck(), storeController.updateStore);
+
+// DELETE many store /api/stores/:ids
+router.delete('/stores/:ids', authCheck(), storeController.destroys);
+
+// new API for Hook
+router.get('/woo/hooks', wooController.test)
 
 module.exports = router;

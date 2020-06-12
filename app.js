@@ -6,6 +6,9 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const passport = require('passport');
 const config = require('./server/config');
+const sockets = require('./server/socket');
+
+
 
 // Connect to the database and load models
 require('./server/models').connect(config.dbUri);
@@ -13,11 +16,15 @@ require('./server/models').connect(config.dbUri);
 const compression = require('compression'); // Compression middleware, compress responses from all routes
 const helmet = require('helmet'); // Protect against web vunerablities, http headers, https://www.npmjs.com/package/helmet
 
+const app = express();
+const http = require('http').createServer(app);
+
+sockets.connect(http);
+
 const auth = require('./server/routes/auth');
 const api = require('./server/routes/api');
 
-const app = express();
-const http = require('http').createServer(app);
+
 
 app.use(cors());
 app.use(compression());
@@ -82,3 +89,4 @@ app.use(function(err, req, res, next) {
  */
 http.listen(port);
 console.log('Server started on port ' + port);
+

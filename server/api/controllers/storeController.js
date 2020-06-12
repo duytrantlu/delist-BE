@@ -7,7 +7,7 @@ exports.list = function(req, res, next){
   const pageOptions = {
     page: req.query['page'] || 1,
     limit: req.query['limit'] || 5000,
-    sort: req.query['sort'] || {updatedAt: -1}
+    sort: req.query['sort'] || {createdAt: -1}
   };
 
   let filterOptions = {};
@@ -79,10 +79,29 @@ exports.updateStore = function(req, res, next) {
   });
 }
 
+// DELETE many Store /api/users/:id -> id = [ids]
+exports.destroys = function(req, res, next) {
+  const {ids} = req.params;
+  Store.deleteMany({_id:{$in: ids.split(',')}}, (err, store) => {
+    if (err || !store) {
+      if (err) console.log(err);
+      return res.status(404).json({
+        success: false,
+        errors: [ err ? err.message : `store id '${req.params.ids} not found'` ]
+      });
+    }
+
+    return res.json({
+      success: true,
+      data: store
+    });
+  });
+};
+
 const updateStore = (store, callback) => {
   validateStore(store, (errValidatiom, s) => {
     if(errValidatiom) return callback(errValidatiom);
-    Store.findOneAndUpdate({_id: s.id}, s,(err, data) => {
+    Store.findOneAndUpdate({_id: s._id}, s,(err, data) => {
       if (err) return callback(err);
 
       return callback(null, data);
@@ -100,7 +119,7 @@ const validateStore = (store, callback) => {
   }
   if (typeof store.baseUrl === 'string') {
     store.baseUrl = store.baseUrl.trim();
-    if (!(validations.storeUrl.regex.value).test(store.baseUrl))
+    if (!store.baseUrl.match(validations.storeUrl.regex.value))
       return callback(new Error(validations.storeUrl.regex.message));
   } else {
     return callback(new Error('store.baseUrl is required'));
