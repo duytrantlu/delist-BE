@@ -1,49 +1,246 @@
 const mongoose = require('mongoose');
-// // const bcrypt = require('bcrypt'); // Use bcryptjs for Windows, bcrypt for Linux
-// const bcrypt = require('bcryptjs');
-const utils = require('../main/common/utils');
 const mongoosePaginate = require('mongoose-paginate');
 const timestamps = require('mongoose-timestamp');
 
-const Roles = require('../../src/shared/roles');
+const Billing = new mongoose.Schema({
+  address_1: {
+    type: String,
+  },
+  address_2: {
+    type: String,
+  },
+  city: {
+    type: String,
+  },
+  company: {
+    type: String,
+  },
+  country: {
+    type: String,
+  },
+  email: {
+    type: String,
+  },
+  first_name: {
+    type: String
+  },
+  last_name: {
+    type: String,
+  },
+  phone: {
+    type: String,
+  },
+  postcode: {
+    type: String,
+  },
+  state: {
+    type: String,
+  }
+});
+
+const metaData = new mongoose.Schema({
+  id: {
+    type: Number,
+  },
+  key: {
+    type: String,
+  },
+  value: {
+    type: mongoose.Schema.Types.Mixed,
+  }
+})
+
+const Shipping = new mongoose.Schema({
+  address_1: {
+    type: String,
+  },
+  address_2: {
+    type: String,
+  },
+  city: {
+    type: String,
+  },
+  company: {
+    type: String,
+  },
+  country: {
+    type: String,
+  },
+  first_name: {
+    type: String,
+  },
+  last_name: {
+    type: String,
+  },
+  postcode: {
+    type: String,
+  },
+  state: {
+    type: String,
+  }
+});
+
+const shippingLines = new mongoose.Schema({
+  id: {
+    type: Number,
+  },
+  instance_id: {
+    type: String,
+  },
+  meta_data: [metaData],
+  method_id: {
+    type: String,
+  },
+  method_title: {
+    type: String,
+  },
+  taxes: [],
+  total: {
+    type: String,
+  },
+  total_tax: {
+    type: String,
+  }
+})
 
 // define the User model schema
 const OrderSchema = new mongoose.Schema({
-  
+  tracking_number: {
+    type: String,
+    default:"",
+  },
+  billing: Billing,
+  cart_hash: {
+    type: String,
+  },
+  cart_tax: {
+    type: String,
+  },
+  created_via: {
+    type: String,
+  },
+  currency: {
+    type: String,
+  },
+  currency_symbol: {
+    type: String,
+  },
+  customer_id: {
+    type: Number
+  },
+  customer_ip_address: {
+    type: String,
+  },
+  customer_note: {
+    type: String,
+  },
+  customer_user_agent: {
+    type: String,
+  },
+  date_completed: {
+    type: Date,
+  },
+  date_completed_gmt: {
+    type: Date
+  },
+  date_created: {
+    type: Date
+  },
+  date_created_gmt: {
+    type: Date,
+  },
+  date_modified: {
+    type: Date,
+  },
+  date_modified_gmt: {
+    type: Date
+  },
+  date_paid: {
+    type: Date
+  },
+  date_paid_gmt: {
+    type: Date
+  },
+  discount_tax: {
+    type: Date
+  },
+  discount_total: {
+    type: Date,
+  },
+  fee_lines: {
+    type: [String]
+  },
+  id: {
+    type: Number,
+  },
+  line_items: {
+    type: [mongoose.Schema.Types.Mixed]
+  },
+  meta_data: [metaData],
+  number: {
+    type: String,
+  },
+  order_key: {
+    type: String,
+  },
+  parent_id: {
+    type: Number
+  },
+  payment_method: {
+    type: String,
+  },
+  payment_method_title: {
+    type: String,
+  },
+  prices_include_tax: {
+    type: Boolean,
+  },
+  refunds: {
+    type: [mongoose.Schema.Types.Mixed]
+  },
+  shipping: Shipping,
+  shipping_lines: [shippingLines],
+  shipping_tax: {
+    type: String,
+  },
+  shipping_total: {
+    type: String,
+  },
+  status: {
+    type: String,
+  },
+  tax_lines: {
+    type: [mongoose.Schema.Types.Mixed]
+  },
+  total: {
+    type: String,
+  },
+  total_tax: {
+    type: String,
+  },
+  transaction_id: {
+    type: String,
+  },
+  version: {
+    type: String,
+  },
+  _link: {
+    type: [mongoose.Schema.Types.Mixed]
+  },
+  store: {
+    type: String,
+  }
 });
 
-UserSchema.plugin(mongoosePaginate);
-UserSchema.plugin(timestamps);
+OrderSchema.plugin(mongoosePaginate);
+OrderSchema.plugin(timestamps);
 
 /**
  * Override default toJSON, remove password field and __v version
  */
-UserSchema.methods.toJSON = function() {
+OrderSchema.methods.toJSON = function () {
   var obj = this.toObject();
   return obj;
 };
-
-
-/**
- * The pre-save hook method.
- *
- * NOTE: pre & post hooks are not executed on update() and findeOneAndUpdate()
- *       http://mongoosejs.com/docs/middleware.html
- */
-// UserSchema.pre('save', function saveHook(next) {
-//   const user = this;
-
-//   // Proceed further only if the password is modified or the user is new
-//   if (!user.isModified('password')) return next();
-
-//   return utils.hash(user.password, (err, hash) => {
-//     if (err) { return next (err); }
-
-//     // Replace the password string with hash value
-//     user.password = hash;
-
-//     return next();
-//   });
-// });
 
 module.exports = mongoose.model('Order', OrderSchema);

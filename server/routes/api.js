@@ -7,6 +7,7 @@ const messageController = require('../api/controllers/messageController');
 const userController = require('../api/controllers/userController');
 const storeController = require('../api/controllers/storeController');
 const wooController = require('../api/controllers/wooHooks');
+const orderController = require('../api/controllers/orderController');
 
 // GET /api/messages/public1
 router.get('/messages/public1', messageController.getPublicMessage1);
@@ -58,6 +59,12 @@ router.put('/stores', authCheck(), storeController.updateStore);
 router.delete('/stores/:ids', authCheck(), storeController.destroys);
 
 // new API for Hook
-router.get('/woo/hooks', wooController.test)
+router.post('/woo/hooks', wooController.test);
+
+// API FOR SYNC DATA
+router.put('/oms/sync', orderController.syncData);
+
+// GET LIST ORDERS
+router.get('/orders', orderController.listOrder);
 
 module.exports = router;
