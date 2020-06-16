@@ -39,6 +39,7 @@
     "install": "^0.10.1",
     "jquery": "^3.1.0",
     "jsonwebtoken": "^7.4.3",
+    "lodash": "^4.17.15",
     "mongoose": "^4.10.8",
     "mongoose-paginate": "^5.0.3",
     "mongoose-timestamp": "^0.6.0",

@@ -229,6 +229,14 @@ const OrderSchema = new mongoose.Schema({
   },
   store: {
     type: String,
+  },
+  updated_paypal: {
+    type: Boolean,
+    default: 0
+  },
+  shipped: {
+    type: Boolean,
+    default: 0
   }
 });
 
