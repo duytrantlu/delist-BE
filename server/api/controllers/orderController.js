@@ -54,13 +54,13 @@ function handleFilter(filter) {
         }
       }
       return {
-        qr: filter[keys[0]],
+        qr: new RegExp(filter[keys[0]], 'i'),
         field: 'payment_method'
       }
     case 'updated_paypal':
       if (filter[keys[0]].length === 0) {
         return {
-          qr: { $exists: true, $ne: filter[keys[0]] },
+          qr: { $exists: true, $ne: 3 },
           field: 'updated_paypal'
         }
       }
@@ -82,7 +82,7 @@ function handleFilter(filter) {
     case 'shipped':
       if (filter[keys[0]].length === 0) {
         return {
-          qr: { $exists: true, $ne: filter[keys[0]] },
+          qr: { $exists: true, $ne: 3 },
           field: 'shipped'
         }
       }
@@ -90,10 +90,21 @@ function handleFilter(filter) {
         qr: filter[keys[0]],
         field: 'shipped'
       }
+    case 'email':
+      if(filter[keys[0]].length === 0){
+        return {
+          qr: [{'billing.email': {'$exists': true, $ne: ''}, 'billing.phone': {'$exists': true, $ne: ''}}],
+          field: '$or'
+        }
+      }
+      return {
+        qr: [{'billing.email':  new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i')}, {'billing.phone': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i')}],
+        field: '$or'
+      }
     case 'createdAt': {
       const dates = filter[keys[0]].split('/');
       return {
-        qr: { "gte": dates[0], "lt": dates[1] },
+        qr: { "$gte": new Date(`${dates[0]}`), "$lt": new Date(`${dates[1]}`) },
         field: 'createdAt'
       }
     }
@@ -115,12 +126,10 @@ exports.listOrder = function (req, res, next) {
         filterOptions[objQuery.field] = objQuery.qr;
       });
     }
-    console.log("==111==", { ...filterOptions, 'createdAt': { '$gte': new Date(filterOptions['createdAt'].gte), '$lt': new Date(filterOptions['createdAt'].lt) } });
   } catch (err) {
     console.log('[List Order] Could not parse \'filter\' param ' + err);
   }
-
-  Order.paginate({ store: { '$exists': true, '$ne': '' }, updated_paypal: { '$exists': true, '$ne': '' }, status: { '$exists': true, '$ne': [] }, shipped: { '$exists': true, '$ne': '' }, payment_method: { '$exists': true, '$ne': '' }, createdAt: { '$gte': new Date('2020-05-31T17:00:00.000Z'), '$lt': new Date('2020-06-30T16:59:59.999Z') } }, pageOptions, (err, result) => {
+  Order.paginate(filterOptions, pageOptions, (err, result) => {
     if (err) {
       console.log(err);
       return res.status(200).json({
@@ -128,7 +137,6 @@ exports.listOrder = function (req, res, next) {
         errors: [JSON.stringify(err)]
       });
     }
-    console.log("=result==", result);
     return res.json(result);
   });
 }
