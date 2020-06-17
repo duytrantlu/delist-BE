@@ -67,4 +67,6 @@ router.put('/oms/sync', orderController.syncData);
 // GET LIST ORDERS
 router.get('/orders', orderController.listOrder);
 
+router.get('/export/orders', orderController.exportData);
+
 module.exports = router;

@@ -140,3 +140,28 @@ exports.listOrder = function (req, res, next) {
     return res.json(result);
   });
 }
+
+
+exports.exportData = function (req, res, next) {
+  let filterOptions = {};
+  try {
+    const filterParam = JSON.parse(req.query['filter']);
+    if (Array.isArray(filterParam) && filterParam.length > 0) {
+      filterParam.forEach((item) => {
+        filterOptions['createdAt']={'$gte': new Date(item.startDate), '$lt': new Date(item.endDate)}
+      });
+    }
+  } catch (err) {
+    console.log('[List Order] Could not parse \'filter\' param ' + err);
+  }
+  Order.find(filterOptions, (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(200).json({
+        success: false,
+        errors: [JSON.stringify(err)]
+      });
+    }
+    return res.json(result);
+  });
+}
