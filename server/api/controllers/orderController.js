@@ -91,14 +91,14 @@ function handleFilter(filter) {
         field: 'shipped'
       }
     case 'email':
-      if(filter[keys[0]].length === 0){
+      if (filter[keys[0]].length === 0) {
         return {
-          qr: [{'billing.email': {'$exists': true, $ne: ''}, 'billing.phone': {'$exists': true, $ne: ''}}],
+          qr: [{ 'billing.email': { '$exists': true, $ne: '' }, 'billing.phone': { '$exists': true, $ne: '' } }],
           field: '$or'
         }
       }
       return {
-        qr: [{'billing.email':  new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i')}, {'billing.phone': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i')}],
+        qr: [{ 'billing.email': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i') }, { 'billing.phone': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i') }],
         field: '$or'
       }
     case 'createdAt': {
@@ -141,6 +141,51 @@ exports.listOrder = function (req, res, next) {
   });
 }
 
+function formatCsvData(csvData) {
+  if (!csvData.length) return [];
+  return csvData.map(csv => {
+    return {
+      'Tracking Number': csv.tracking_number,
+      'Note': '',
+      'Order Number': csv.number,
+      'Order Status': csv.status,
+      'Order Date': csv.date_created,
+      'Paid Date': csv.date_paid,
+      'Currency': csv.currency,
+      'Order Shipping Amount': csv.shipping_total,
+      'Order Tax Amount': csv.total_tax,
+      'Order Total Amount': csv.total,
+      'Coupons Used': '',
+      'Discount Amount': csv.discount_total,
+      'Shipping Method Title': csv.shipping_lines.length > 0 ? csv.shipping_lines.map(v => v.method_title).join(',') : '',
+      'Item Name': csv.line_items.length > 0 ? csv.line_items.map(v => v.name).join(',') : '',
+      'Quantity': csv.line_items.length > 0 ? csv.line_items.map(v => v.quantity).join(',') : '',
+      'SKU': csv.line_items.length > 0 ? csv.line_items.map(v => v.sku).join(',') : '',
+      'Item Cost': csv.line_items.length > 0 ? csv.line_items.map(v => v.price).join(',') : '',
+      'Full Name (Billing)': `${csv.billing.first_name} ${csv.billing.last_name}`,
+      'Address 1&2 (Billing)': `${csv.billing.address_1} ${csv.billing.address_2}`,
+      'Company (Billing)': `${csv.billing.company}`,
+      'City (Billing)': `${csv.billing.city}`,
+      'Postcode (Billing)': `${csv.billing.postcode}`,
+      'State Code (Billing)': `${csv.billing.state}`,
+      'Country Code (Billing)': `${csv.billing.country}`,
+      'Full Name (Shipping)': `${csv.shipping.first_name} ${csv.shipping.last_name}`,
+      'Address 1&2': `${csv.shipping.address_1} ${csv.shipping.address_2}`,
+      'Company': `${csv.shipping.company}`,
+      'City (Shipping)': `${csv.shipping.city}`,
+      'State Code (Shipping)': `${csv.shipping.state}`,
+      'Postcode (Shipping)': `${csv.shipping.postcode}`,
+      'Country Code (Shipping)': `${csv.shipping.country}`,
+      'Email (Billing)': `${csv.billing.email}`,
+      'Phone (Billing)': `${csv.billing.phone}`,
+      'Customer Note': csv.customer_note,
+      'Payment Method Title': csv.payment_method_title,
+      'Transaction ID': csv.transaction_id,
+      'Order Refund Amount': csv.refunds.length,
+      'Order Subtotal Amount Refunded': ''
+    }
+  })
+}
 
 exports.exportData = function (req, res, next) {
   let filterOptions = {};
@@ -148,7 +193,7 @@ exports.exportData = function (req, res, next) {
     const filterParam = JSON.parse(req.query['filter']);
     if (Array.isArray(filterParam) && filterParam.length > 0) {
       filterParam.forEach((item) => {
-        filterOptions['createdAt']={'$gte': new Date(item.startDate), '$lt': new Date(item.endDate)}
+        filterOptions['createdAt'] = { '$gte': new Date(item.startDate), '$lt': new Date(item.endDate) }
       });
     }
   } catch (err) {
@@ -162,6 +207,14 @@ exports.exportData = function (req, res, next) {
         errors: [JSON.stringify(err)]
       });
     }
-    return res.json(result);
+    try {
+      const rs = formatCsvData(result)
+      return res.status(200).json(rs);  
+    } catch (error) {
+      return res.status(200).json({
+        success: false,
+        errors: [JSON.stringify(error)]
+      });
+    }
   });
 }
