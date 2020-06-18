@@ -182,7 +182,9 @@ function formatCsvData(csvData) {
       'Payment Method Title': csv.payment_method_title,
       'Transaction ID': csv.transaction_id,
       'Order Refund Amount': csv.refunds.length,
-      'Order Subtotal Amount Refunded': ''
+      'Order Subtotal Amount Refunded': '',
+      'Store': csv.store,
+      'id': csv._id,
     }
   })
 }
