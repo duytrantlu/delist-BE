@@ -15,16 +15,14 @@ module.exports = function(roles) {
     if (!req.headers.authorization) {
       return res.status(401).end();
     }
-
+    
     // Get the last part from a authorization header string like "bearer token-value"
     const token = req.headers.authorization.split(' ')[1];
 
     // Decode the token using a secret key-phrase
     return jwt.verify(token, config.jwtSecret, (err, decoded) => {
-
       // 401 not unauthorized
       if (err) return res.status(401).end();
-
       const userId = decoded.sub;
 
       // Check if user exists
