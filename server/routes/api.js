@@ -57,6 +57,8 @@ router.put('/oms/sync', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), o
 // GET LIST ORDERS
 router.get('/orders', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), orderController.listOrder);
 
+router.put('/orders', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), orderController.updateOrders);
+
 router.get('/export/orders', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), orderController.exportData);
 
 module.exports = router;

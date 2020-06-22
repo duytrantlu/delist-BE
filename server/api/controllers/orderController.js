@@ -211,7 +211,7 @@ exports.exportData = function (req, res, next) {
     }
     try {
       const rs = formatCsvData(result)
-      return res.status(200).json(rs);  
+      return res.status(200).json(rs);
     } catch (error) {
       return res.status(200).json({
         success: false,
@@ -219,4 +219,36 @@ exports.exportData = function (req, res, next) {
       });
     }
   });
+}
+
+exports.updateOrders = function (req, res, next) {
+  const errors = [];
+  const { orders } = req.body;
+  if (orders.length) {
+    try {
+      orders.forEach(function (order) {
+        try {
+          Order.findOneAndUpdate({ _id: order._d }, { $set: { tracking_number: order.tracking_number } }, function (err, rs) {
+            if (err) errors.push({tracking: order.tracking_number, err: JSON.stringify(err)});
+          }); 
+        } catch (err) {
+          errors.push({tracking: order.tracking_number, err: JSON.stringify(err)});
+        }
+      });
+      return res.status(200).json({
+        success: true,
+        errors,
+      });
+    } catch (error) {
+      return res.status(200).json({
+        success: false,
+        errors: JSON.stringify(error),
+      });
+    }
+  } else {
+    return res.status(200).json({
+      success: false,
+      errors: new Error("Nothing for update")
+    });
+  }
 }
