@@ -56,7 +56,7 @@ exports.dashboardInfo = async (req, res, next) => {
     try {
       if (Array.isArray(filterParam) && filterParam.length > 0) {
         filterParam.forEach((item) => {
-          filterOptions['createdAt'] = { '$gt': new Date(item.startDate), '$lte': new Date(item.endDate) }
+          filterOptions['date_created'] = { '$gt': new Date(item.startDate), '$lte': new Date(item.endDate) }
         });
       }
     } catch (err) {

@@ -101,11 +101,11 @@ function handleFilter(filter) {
         qr: [{ 'billing.email': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i') }, { 'billing.phone': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i') }],
         field: '$or'
       }
-    case 'createdAt': {
+    case 'date_created': {
       const dates = filter[keys[0]].split('/');
       return {
         qr: { "$gte": new Date(`${dates[0]}`), "$lt": new Date(`${dates[1]}`) },
-        field: 'createdAt'
+        field: 'date_created'
       }
     }
   }
@@ -195,7 +195,7 @@ exports.exportData = function (req, res, next) {
     const filterParam = JSON.parse(req.query['filter']);
     if (Array.isArray(filterParam) && filterParam.length > 0) {
       filterParam.forEach((item) => {
-        filterOptions['createdAt'] = { '$gte': new Date(item.startDate), '$lt': new Date(item.endDate) }
+        filterOptions['date_created'] = { '$gte': new Date(item.startDate), '$lt': new Date(item.endDate) }
       });
     }
   } catch (err) {
