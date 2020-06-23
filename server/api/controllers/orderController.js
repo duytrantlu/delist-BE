@@ -224,6 +224,7 @@ exports.exportData = function (req, res, next) {
 exports.updateOrders = function (req, res, next) {
   const errors = [];
   const { orders } = req.body;
+
   if (orders.length) {
     try {
       orders.forEach(function (order) {
@@ -235,6 +236,7 @@ exports.updateOrders = function (req, res, next) {
           errors.push({tracking: order.tracking_number, err: JSON.stringify(err)});
         }
       });
+
       return res.status(200).json({
         success: true,
         errors,

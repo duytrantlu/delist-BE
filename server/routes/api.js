@@ -3,7 +3,7 @@ const router = express.Router();
 const authCheck = require('../middleware/auth-check');
 const Roles = require('../../src/shared/roles');
 
-const messageController = require('../api/controllers/messageController');
+const dashboardController = require('../api/controllers/dashboardController');
 const userController = require('../api/controllers/userController');
 const storeController = require('../api/controllers/storeController');
 const wooController = require('../api/controllers/wooHooks');
@@ -60,5 +60,10 @@ router.get('/orders', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), ord
 router.put('/orders', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), orderController.updateOrders);
 
 router.get('/export/orders', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), orderController.exportData);
+
+// Dashboard get Infor
+router.get('/dashboard/index', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), dashboardController.dashboardInfo);
+
+
 
 module.exports = router;
