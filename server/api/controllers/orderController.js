@@ -224,12 +224,11 @@ exports.exportData = function (req, res, next) {
 exports.updateOrders = function (req, res, next) {
   const errors = [];
   const { orders } = req.body;
-
   if (orders.length) {
     try {
       orders.forEach(function (order) {
         try {
-          Order.findOneAndUpdate({ _id: order._d }, { $set: { tracking_number: order.tracking_number } }, function (err, rs) {
+          Order.findOneAndUpdate({ _id: order.id }, { $set: { tracking_number: order.tracking_number } }, function (err, rs) {
             if (err) errors.push({tracking: order.tracking_number, err: JSON.stringify(err)});
           }); 
         } catch (err) {
