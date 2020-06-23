@@ -115,7 +115,7 @@ exports.listOrder = function (req, res, next) {
   const pageOptions = {
     page: req.query['page'] ? parseInt(req.query['page']) : 1,
     limit: req.query['limit'] ? parseInt(req.query['limit']) : 1000,
-    sort: req.query['sort'] || { updatedAt: -1 }
+    sort: req.query['sort'] || { date_created: -1 }
   };
   let filterOptions = {};
   try {
