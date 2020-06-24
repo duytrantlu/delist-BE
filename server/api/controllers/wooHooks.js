@@ -23,11 +23,13 @@ function extractHostname(url) {
 exports.create = function (req, res, next) {
   const { body } = req;
   console.log("===body===", body);
+  const store = extractHostname(body._links.self[0].href);
+  console.log("===store===", store);
   const options = { upsert: true, new: true, setDefaultsOnInsert: true };
   if (body.webhook_id) {
     return res.json({ success: false });
   } else {
-    Order.findOneAndUpdate({ $and: [{ id: body.id }, { number: body.number }] }, body, options, (err, result) => {
+    Order.findOneAndUpdate({ $and: [{ id: body.id }, { number: body.number }] }, {...body, store}, options, (err, result) => {
       if (err) {
         console.log(err);
         return res.json({
@@ -42,10 +44,11 @@ exports.create = function (req, res, next) {
 
 exports.update = function (req, res, next) {
   const { body } = req;
+  const store = extractHostname(body._links.self[0].href);
   if (body.webhook_id) {
     return res.json({ success: false });
   } else {
-    Order.findOneAndUpdate({ $and: [{ id: body.id }, { number: body.number }] }, body, (err, result) => {
+    Order.findOneAndUpdate({ $and: [{ id: body.id }, { number: body.number }] }, {...body, store}, (err, result) => {
       if (err) {
         console.log(err);
         return res.json({
