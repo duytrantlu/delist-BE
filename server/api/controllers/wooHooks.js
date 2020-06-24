@@ -1,8 +1,28 @@
 const connection = require('../../socket').connection();
 const Order = require('mongoose').model('Order');
 
+function extractHostname(url) {
+  let hostname;
+  //find & remove protocol (http, ftp, etc.) and get hostname
+
+  if (url.indexOf("//") > -1) {
+    hostname = url.split('/')[2];
+  }
+  else {
+    hostname = url.split('/')[0];
+  }
+
+  //find & remove port number
+  hostname = hostname.split(':')[0];
+  //find & remove "?"
+  hostname = hostname.split('?')[0];
+
+  return hostname.split('.')[0];
+}
+
 exports.create = function (req, res, next) {
   const { body } = req;
+  console.log("===body===", body);
   const options = { upsert: true, new: true, setDefaultsOnInsert: true };
   if (body.webhook_id) {
     return res.json({ success: false });
@@ -14,7 +34,6 @@ exports.create = function (req, res, next) {
           success: false
         });
       }
-      console.log("===create===")
       connection.sendEvent('webhookWooCommerceCreateEvent', {success: true});
       return res.status(200).json({ success: true });
     });
@@ -33,7 +52,6 @@ exports.update = function (req, res, next) {
           success: false
         });
       }
-      console.log("===update===")
       connection.sendEvent('webhookWooCommerceUpdateEvent', {success: true});
       return res.status(200).json({ success: true });
     });
