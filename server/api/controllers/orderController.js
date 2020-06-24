@@ -185,6 +185,7 @@ function formatCsvData(csvData) {
       'Order Subtotal Amount Refunded': '',
       'Store': csv.store,
       'id': csv._id,
+      'OrderId': csv.id,
     }
   })
 }
@@ -229,10 +230,10 @@ exports.updateOrders = function (req, res, next) {
       orders.forEach(function (order) {
         try {
           Order.findOneAndUpdate({ _id: order.id }, { $set: { tracking_number: order.tracking_number } }, function (err, rs) {
-            if (err) errors.push({tracking: order.tracking_number, err: JSON.stringify(err)});
-          }); 
+            if (err) errors.push({ tracking: order.tracking_number, err: JSON.stringify(err) });
+          });
         } catch (err) {
-          errors.push({tracking: order.tracking_number, err: JSON.stringify(err)});
+          errors.push({ tracking: order.tracking_number, err: JSON.stringify(err) });
         }
       });
 
