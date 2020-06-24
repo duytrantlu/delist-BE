@@ -53,6 +53,10 @@ router.post('/woo/hooks/create', wooController.create);
 
 router.post('/woo/hooks/update', wooController.update);
 
+router.post('/woo/hooks/delete', wooController.delete);
+
+router.delete('/woo/hooks/delete', wooController.delete);
+
 // API FOR SYNC DATA
 router.put('/oms/sync', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), orderController.syncData);
 

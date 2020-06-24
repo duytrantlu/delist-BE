@@ -11,3 +11,9 @@ exports.update = function(req, res, next) {
   console.log("======update====", req.body);
   res.json({success: true})
 }
+
+exports.delete = function(req, res, next) {
+  connection.sendEvent('webhookWooCommerce', 'xin chao! minh dung day tu chieu delete');
+  console.log("======delete====", req.body);
+  res.json({success: true})
+}
