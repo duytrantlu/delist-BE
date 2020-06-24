@@ -2,41 +2,43 @@ const connection = require('../../socket').connection();
 const Order = require('mongoose').model('Order');
 
 function extractHostname(url) {
-  let hostname;
-  //find & remove protocol (http, ftp, etc.) and get hostname
+  try {
+    let hostname;
+    //find & remove protocol (http, ftp, etc.) and get hostname
 
-  if (url.indexOf("//") > -1) {
-    hostname = url.split('/')[2];
+    if (url.indexOf("//") > -1) {
+      hostname = url.split('/')[2];
+    }
+    else {
+      hostname = url.split('/')[0];
+    }
+
+    //find & remove port number
+    hostname = hostname.split(':')[0];
+    //find & remove "?"
+    hostname = hostname.split('?')[0];
+
+    return hostname.split('.')[0];
+  } catch (err) {
+    return null;
   }
-  else {
-    hostname = url.split('/')[0];
-  }
-
-  //find & remove port number
-  hostname = hostname.split(':')[0];
-  //find & remove "?"
-  hostname = hostname.split('?')[0];
-
-  return hostname.split('.')[0];
 }
 
 exports.create = function (req, res, next) {
   const { body } = req;
-  console.log("===body===", body);
-  const store = extractHostname(body._links.self[0].href);
-  console.log("===store===", store);
+  const store = extractHostname(body._links.self[0].href) || 'NO-NAME';
   const options = { upsert: true, new: true, setDefaultsOnInsert: true };
   if (body.webhook_id) {
     return res.json({ success: false });
   } else {
-    Order.findOneAndUpdate({ $and: [{ id: body.id }, { number: body.number }] }, {...body, store}, options, (err, result) => {
+    Order.findOneAndUpdate({ $and: [{ id: body.id }, { number: body.number }] }, { ...body, store }, options, (err, result) => {
       if (err) {
         console.log(err);
         return res.json({
           success: false
         });
       }
-      connection.sendEvent('webhookWooCommerceCreateEvent', {success: true});
+      connection.sendEvent('webhookWooCommerceCreateEvent', { success: true });
       return res.status(200).json({ success: true });
     });
   }
@@ -44,18 +46,18 @@ exports.create = function (req, res, next) {
 
 exports.update = function (req, res, next) {
   const { body } = req;
-  const store = extractHostname(body._links.self[0].href);
+  const store = extractHostname(body._links.self[0].href)|| 'NO-NAME';
   if (body.webhook_id) {
     return res.json({ success: false });
   } else {
-    Order.findOneAndUpdate({ $and: [{ id: body.id }, { number: body.number }] }, {...body, store}, (err, result) => {
+    Order.findOneAndUpdate({ $and: [{ id: body.id }, { number: body.number }] }, { ...body, store }, (err, result) => {
       if (err) {
         console.log(err);
         return res.json({
           success: false
         });
       }
-      connection.sendEvent('webhookWooCommerceUpdateEvent', {success: true});
+      connection.sendEvent('webhookWooCommerceUpdateEvent', { success: true });
       return res.status(200).json({ success: true });
     });
   }
