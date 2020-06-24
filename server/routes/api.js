@@ -49,7 +49,11 @@ router.put('/stores', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), sto
 router.delete('/stores/:ids', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), storeController.destroys);
 
 // new API for Hook
-router.post('/woo/hooks', wooController.test);
+router.post('/woo/hooks', wooController.create);
+
+router.put('/woo/hooks', wooController.update);
+
+router.delete('/woo/hooks', wooController.delete);
 
 // API FOR SYNC DATA
 router.put('/oms/sync', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), orderController.syncData);

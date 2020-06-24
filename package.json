@@ -13,7 +13,7 @@
     "build:prod": "webpack --config ./webpack.prod.config.js",
     "start:dev": "nodemon app.js",
     "start1:": "if-env NODE_ENV=production && npm run build:prod && node app.js || npm run start:dev",
-    "start": "node app.js"
+    "start": "node --max-old-space-size=1024 app.js"
   },
   "keywords": [
     "react",
