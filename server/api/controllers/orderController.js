@@ -222,8 +222,21 @@ exports.exportData = function (req, res, next) {
   });
 }
 
-exports.updateOrders = function (req, res, next) {
+connection.registerEvent('updateTrackingEvent', function (order){
+  console.log("[UPDATE TRACKING] i am listening update order ...")
   const errors = [];
+  try {
+    Order.findOneAndUpdate({ _id: order.id }, { $push: { tracking_number: order.tracking_number } }, function (err, rs) {
+      if (err) errors.push({ tracking: order.tracking_number, err: JSON.stringify(err) });
+    });
+  } catch (err) {
+    errors.push({ tracking: order.tracking_number, err: JSON.stringify(err) });
+  }
+  console.log("[UPDATE TRACKING]", errors);
+});
+
+exports.updateOrders = function (req, res, next) {
+  const errors = []; 
   const { orders } = req.body;
   if (orders.length) {
     try {
