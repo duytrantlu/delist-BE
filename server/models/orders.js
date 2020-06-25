@@ -106,8 +106,7 @@ const shippingLines = new mongoose.Schema({
 // define the User model schema
 const OrderSchema = new mongoose.Schema({
   tracking_number: {
-    type: String,
-    default:"",
+    type: [mongoose.Schema.Types.Mixed],
   },
   billing: Billing,
   cart_hash: {
