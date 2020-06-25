@@ -127,11 +127,19 @@ exports.listOrder = function (req, res, next) {
   });
 }
 
+function handleTracking(tracking){
+  let str = '';
+  tracking.forEach(t => {
+    t += `${t.provider} ${t.number} ${date} ${t.status} \n`
+  });
+  return str;
+}
+
 function formatCsvData(csvData) {
   if (!csvData.length) return [];
   return csvData.map(csv => {
     return {
-      'Tracking Number': csv.tracking_number,
+      'Tracking Number': csv.tracking_number.length ? handleTracking(csv.tracking_number):'',
       'Note': '',
       'Order Number': csv.number,
       'Order Status': csv.status,
