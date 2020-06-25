@@ -80,7 +80,11 @@ function handleFilter(filter) {
         return;
       }
       return {
-        qr: [{ 'billing.email': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i') }, { 'billing.phone': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i') }],
+        qr: [
+          { 'billing.email': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i') },
+          { 'billing.phone': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i') },
+          {'number': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i')}
+        ],
         field: '$or'
       }
     case 'date_created': {
@@ -111,7 +115,6 @@ exports.listOrder = function (req, res, next) {
   } catch (err) {
     console.log('[List Order] Could not parse \'filter\' param ' + err);
   }
-  console.log("===filterOptions===", filterOptions);
   Order.paginate(filterOptions, pageOptions, (err, result) => {
     if (err) {
       console.log(err);
