@@ -1,5 +1,10 @@
-const connection = require('../../socket').connection();
 const Order = require('mongoose').model('Order');
+const baseUrl = 'http://api.delistmanagement.com:3001';
+const client = require('socket.io-client')(baseUrl);
+
+
+// socket
+const socket = io(baseUrl);
 const _ = require('lodash');
 
 exports.syncData = function (req, res, next) {
@@ -83,7 +88,7 @@ function handleFilter(filter) {
         qr: [
           { 'billing.email': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i') },
           { 'billing.phone': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i') },
-          {'number': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i')}
+          { 'number': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i') }
         ],
         field: '$or'
       }
@@ -127,7 +132,7 @@ exports.listOrder = function (req, res, next) {
   });
 }
 
-function handleTracking(tracking){
+function handleTracking(tracking) {
   let str = '';
   tracking.forEach(t => {
     t += `${t.provider} ${t.number} ${date} ${t.status} \n`
@@ -139,7 +144,7 @@ function formatCsvData(csvData) {
   if (!csvData.length) return [];
   return csvData.map(csv => {
     return {
-      'Tracking Number': csv.tracking_number.length ? handleTracking(csv.tracking_number):'',
+      'Tracking Number': csv.tracking_number.length ? handleTracking(csv.tracking_number) : '',
       'Tracking Provider': '',
       'Note': '',
       'Order Number': csv.number,
@@ -216,12 +221,10 @@ exports.exportData = function (req, res, next) {
     }
   });
 }
-
-connection.registerEvent('updateTrackingEvent', function (order){
-  console.log("[UPDATE TRACKING] i am listening update order ...")
+client.on('handleUpdateTrackingEvent', function (order) {
   const errors = [];
   try {
-    Order.findOneAndUpdate({ _id: order.id }, { $push: { tracking_number: order.tracking_number } }, function (err, rs) {
+    Order.findOneAndUpdate({ $and: [{ id: order.id }, { number: order.number }] }, { $push: { tracking_number: order.tracking } }, function (err, rs) {
       if (err) errors.push({ tracking: order.tracking_number, err: JSON.stringify(err) });
     });
   } catch (err) {
@@ -231,13 +234,13 @@ connection.registerEvent('updateTrackingEvent', function (order){
 });
 
 exports.updateOrders = function (req, res, next) {
-  const errors = []; 
+  const errors = [];
   const { orders } = req.body;
   if (orders.length) {
     try {
       orders.forEach(function (order) {
         try {
-          Order.findOneAndUpdate({$and: [{ id: order.id }, {number: order.number} ]}, { $set: { tracking_number: order.tracking } }, function (err, rs) {
+          Order.findOneAndUpdate({ $and: [{ id: order.id }, { number: order.number }] }, { $push: { tracking_number: order.tracking } }, function (err, rs) {
             if (err) errors.push({ tracking: order.tracking_number, err: JSON.stringify(err) });
           });
         } catch (err) {

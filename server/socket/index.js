@@ -6,7 +6,6 @@ class Realtime {
     }
     connect(server) {
         const io = require('socket.io')(server);
-
         io.on('connection', (socket) => {
             this._socket = socket; 
             this._socket.on('statusConnetion',(data)=>{
@@ -18,6 +17,9 @@ class Realtime {
             });
 
             console.log(`New socket connection: ${socket.id}`);
+            io.on('updateTrackingEvent', function (order) {
+                io.emit('handleUpdateTrackingEvent', order);
+            });
         });
     }
 
