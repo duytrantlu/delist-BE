@@ -71,7 +71,7 @@ function handleFilter(filter) {
     case 'status':
       if (filter[keys[0]].length === 0) {
         return {
-          qr: {  $ne: filter[keys[0]] },
+          qr: { $ne: filter[keys[0]] },
           field: 'status'
         }
       }
@@ -93,7 +93,7 @@ function handleFilter(filter) {
     case 'email':
       if (filter[keys[0]].length === 0) {
         return {
-          qr: [{ 'billing.email': { $ne: '' }, 'billing.phone': { $ne: '' } }],
+          qr: [{ 'billing.email': { $ne: '' }},{ 'billing.email': ''}, {'billing.phone': { $ne: '' } }, {'billing.phone': '' }],
           field: '$or'
         }
       }
