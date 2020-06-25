@@ -1,10 +1,6 @@
 const Order = require('mongoose').model('Order');
 const baseUrl = 'http://api.delistmanagement.com:3001';
 const client = require('socket.io-client')(baseUrl);
-
-
-// socket
-const socket = io(baseUrl);
 const _ = require('lodash');
 
 exports.syncData = function (req, res, next) {
