@@ -225,7 +225,7 @@ const OrderSchema = new mongoose.Schema({
     type: String,
   },
   _link: {
-    type: [mongoose.Schema.Types.Mixed]
+    type: mongoose.Schema.Types.Mixed
   },
   store: {
     type: String,
