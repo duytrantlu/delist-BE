@@ -129,6 +129,7 @@ exports.listOrder = function (req, res, next) {
   } catch (err) {
     console.log('[List Order] Could not parse \'filter\' param ' + err);
   }
+  console.log("===filterOptions===", filterOptions);
   Order.paginate(filterOptions, pageOptions, (err, result) => {
     if (err) {
       console.log(err);
