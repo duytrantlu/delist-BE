@@ -218,6 +218,7 @@ exports.exportData = function (req, res, next) {
   });
 }
 client.on('handleUpdateTrackingEvent', function (order) {
+  console.log("====handleUpdateTrackingEvent===", order);
   const errors = [];
   try {
     Order.findOneAndUpdate({ $and: [{ id: order.id }, { number: order.number }] }, { $push: { tracking_number: order.tracking } }, function (err, rs) {
