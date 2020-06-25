@@ -37,10 +37,7 @@ function handleFilter(filter) {
   switch (keys[0]) {
     case 'store':
       if (filter[keys[0]].length === 0) {
-        return {
-          qr: { $ne: filter[keys[0]] },
-          field: 'store'
-        }
+        return;
       }
       return {
         qr: { $in: filter[keys[0]] },
@@ -48,10 +45,7 @@ function handleFilter(filter) {
       }
     case 'payment_method':
       if (filter[keys[0]].length === 0) {
-        return {
-          qr: { $ne: filter[keys[0]] },
-          field: 'payment_method'
-        }
+        return;
       }
       return {
         qr: new RegExp(filter[keys[0]], 'i'),
@@ -59,10 +53,7 @@ function handleFilter(filter) {
       }
     case 'updated_paypal':
       if (filter[keys[0]].length === 0) {
-        return {
-          qr: { $ne: 3 },
-          field: 'updated_paypal'
-        }
+        return;
       }
       return {
         qr: filter[keys[0]],
@@ -70,10 +61,7 @@ function handleFilter(filter) {
       }
     case 'status':
       if (filter[keys[0]].length === 0) {
-        return {
-          qr: { $ne: filter[keys[0]] },
-          field: 'status'
-        }
+        return;
       }
       return {
         qr: { $in: filter[keys[0]] },
@@ -81,10 +69,7 @@ function handleFilter(filter) {
       }
     case 'shipped':
       if (filter[keys[0]].length === 0) {
-        return {
-          qr: { $ne: 3 },
-          field: 'shipped'
-        }
+        return;
       }
       return {
         qr: filter[keys[0]],
@@ -92,10 +77,7 @@ function handleFilter(filter) {
       }
     case 'email':
       if (filter[keys[0]].length === 0) {
-        return {
-          qr: [{ 'billing.email': { $ne: '' }},{ 'billing.email': ''}, {'billing.phone': { $ne: '' } }, {'billing.phone': '' }],
-          field: '$or'
-        }
+        return;
       }
       return {
         qr: [{ 'billing.email': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i') }, { 'billing.phone': new RegExp(filter[keys[0]].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'i') }],
@@ -123,7 +105,7 @@ exports.listOrder = function (req, res, next) {
     if (Array.isArray(filterParam) && filterParam.length > 0) {
       filterParam.forEach((item) => {
         const objQuery = handleFilter(item);
-        filterOptions[objQuery.field] = objQuery.qr;
+        objQuery ? filterOptions[objQuery.field] = objQuery.qr : null;
       });
     }
   } catch (err) {
