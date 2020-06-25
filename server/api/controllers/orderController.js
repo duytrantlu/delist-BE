@@ -1,6 +1,4 @@
 const Order = require('mongoose').model('Order');
-const baseUrl = 'http://api.delistmanagement.com:3001';
-const client = require('socket.io-client')(baseUrl);
 const _ = require('lodash');
 
 exports.syncData = function (req, res, next) {
@@ -217,18 +215,6 @@ exports.exportData = function (req, res, next) {
     }
   });
 }
-client.on('handleUpdateTrackingEvent', function (order) {
-  console.log("====handleUpdateTrackingEvent===", order);
-  const errors = [];
-  try {
-    Order.findOneAndUpdate({ $and: [{ id: order.id }, { number: order.number }] }, { $push: { tracking_number: order.tracking } }, function (err, rs) {
-      if (err) errors.push({ tracking: order.tracking_number, err: JSON.stringify(err) });
-    });
-  } catch (err) {
-    errors.push({ tracking: order.tracking_number, err: JSON.stringify(err) });
-  }
-  console.log("[UPDATE TRACKING]", errors);
-});
 
 exports.updateOrders = function (req, res, next) {
   const errors = [];
