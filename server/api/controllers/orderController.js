@@ -140,6 +140,7 @@ function formatCsvData(csvData) {
   return csvData.map(csv => {
     return {
       'Tracking Number': csv.tracking_number.length ? handleTracking(csv.tracking_number):'',
+      'Tracking Provider': '',
       'Note': '',
       'Order Number': csv.number,
       'Order Status': csv.status,
@@ -223,7 +224,7 @@ exports.updateOrders = function (req, res, next) {
     try {
       orders.forEach(function (order) {
         try {
-          Order.findOneAndUpdate({ _id: order.id }, { $set: { tracking_number: order.tracking_number } }, function (err, rs) {
+          Order.findOneAndUpdate({$and: [{ id: order.id }, {number: order.number} ]}, { $set: { tracking_number: order.tracking } }, function (err, rs) {
             if (err) errors.push({ tracking: order.tracking_number, err: JSON.stringify(err) });
           });
         } catch (err) {
