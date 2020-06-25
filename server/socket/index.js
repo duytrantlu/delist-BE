@@ -7,17 +7,17 @@ class Realtime {
     connect(server) {
         const io = require('socket.io')(server);
         io.on('connection', (socket) => {
-            this._socket = socket; 
-            this._socket.on('statusConnetion',(data)=>{
+            this._socket = socket;
+            this._socket.on('statusConnetion', (data) => {
                 console.log(data)
             });
 
             this._socket.on('disconnect', function () {
-                console.log(socket.id,"Un socket se desconecto");
+                console.log(socket.id, "Un socket se desconecto");
             });
 
             console.log(`New socket connection: ${socket.id}`);
-            this._socket.on('updateTrackingEvent', function (order) {
+            this._socket.on('updateTrackingEvent', order => {
                 console.log("====updateTrackingEvent=")
                 this._socket.emit('handleUpdateTrackingEvent', order);
             });
@@ -33,14 +33,14 @@ class Realtime {
     }
 
     static init(server) {
-        if(!connection) {
+        if (!connection) {
             connection = new Realtime();
             connection.connect(server);
         }
     }
 
     static getConnection() {
-        if(!connection) {
+        if (!connection) {
             throw new Error("no active connection");
         }
         return connection;
@@ -49,5 +49,5 @@ class Realtime {
 
 module.exports = {
     connect: Realtime.init,
-    connection: Realtime.getConnection 
+    connection: Realtime.getConnection
 }
