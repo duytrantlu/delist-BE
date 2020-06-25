@@ -17,9 +17,9 @@ class Realtime {
             });
 
             console.log(`New socket connection: ${socket.id}`);
-            io.on('updateTrackingEvent', function (order) {
+            this._socket.on('updateTrackingEvent', function (order) {
                 console.log("====updateTrackingEvent=")
-                io.emit('handleUpdateTrackingEvent', order);
+                this._socket.emit('handleUpdateTrackingEvent', order);
             });
         });
     }
