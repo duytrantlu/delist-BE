@@ -38,7 +38,7 @@ function handleFilter(filter) {
     case 'store':
       if (filter[keys[0]].length === 0) {
         return {
-          qr: { $exists: true, $ne: filter[keys[0]] },
+          qr: { $ne: filter[keys[0]] },
           field: 'store'
         }
       }
@@ -49,7 +49,7 @@ function handleFilter(filter) {
     case 'payment_method':
       if (filter[keys[0]].length === 0) {
         return {
-          qr: { $exists: true, $ne: filter[keys[0]] },
+          qr: { $ne: filter[keys[0]] },
           field: 'payment_method'
         }
       }
@@ -60,7 +60,7 @@ function handleFilter(filter) {
     case 'updated_paypal':
       if (filter[keys[0]].length === 0) {
         return {
-          qr: { $exists: true, $ne: 3 },
+          qr: { $ne: 3 },
           field: 'updated_paypal'
         }
       }
@@ -71,7 +71,7 @@ function handleFilter(filter) {
     case 'status':
       if (filter[keys[0]].length === 0) {
         return {
-          qr: { $exists: true, $ne: filter[keys[0]] },
+          qr: {  $ne: filter[keys[0]] },
           field: 'status'
         }
       }
@@ -82,7 +82,7 @@ function handleFilter(filter) {
     case 'shipped':
       if (filter[keys[0]].length === 0) {
         return {
-          qr: { $exists: true, $ne: 3 },
+          qr: { $ne: 3 },
           field: 'shipped'
         }
       }
@@ -93,7 +93,7 @@ function handleFilter(filter) {
     case 'email':
       if (filter[keys[0]].length === 0) {
         return {
-          qr: [{ 'billing.email': { '$exists': true, $ne: '' }, 'billing.phone': { '$exists': true, $ne: '' } }],
+          qr: [{ 'billing.email': { $ne: '' }, 'billing.phone': { $ne: '' } }],
           field: '$or'
         }
       }
