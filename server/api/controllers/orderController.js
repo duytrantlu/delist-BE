@@ -239,9 +239,8 @@ exports.updateOrders = function (req, res, next) {
 
 exports.removeElementTracking = function (req, res, next) {
   const { order } = req.body;
-  console.log("===order remove===", order);
   try {
-    Order.findOneAndUpdate({ $and: [{ id: order.id }, { number: order.number }] }, { $pull: { tracking_number: order.tracking.tracking_id } }, function (err, rs) {
+    Order.findOneAndUpdate({ $and: [{ id: order.id }, { number: order.number }] }, { $pull: { tracking_number: { tracking_id: order.tracking.tracking_id } } }, function (err, rs) {
       if (err) return res.status(200).json({
         success: false,
         errors: JSON.stringify(err),
