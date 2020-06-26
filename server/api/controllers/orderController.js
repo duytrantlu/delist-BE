@@ -217,35 +217,22 @@ exports.exportData = function (req, res, next) {
 }
 
 exports.updateOrders = function (req, res, next) {
-  const errors = [];
   const { orders } = req.body;
-  console.log("==req.body==", req.body);
-  if (orders.length) {
-    try {
-      orders.forEach(function (order) {
-        try {
-          Order.findOneAndUpdate({ $and: [{ id: order.id }, { number: order.number }] }, { $push: { tracking_number: order.tracking } }, function (err, rs) {
-            if (err) errors.push({ tracking: order.tracking_number, err: JSON.stringify(err) });
-          });
-        } catch (err) {
-          errors.push({ tracking: order.tracking_number, err: JSON.stringify(err) });
-        }
+  try {
+    Order.findOneAndUpdate({ $and: [{ id: orders.id }, { number: orders.number }] }, { $push: { tracking_number: orders.tracking } }, function (err, rs) {
+      if (err) return res.status(200).json({
+        success: false,
+        errors: JSON.stringify(err),
       });
-
       return res.status(200).json({
         success: true,
-        errors,
+        rs,
       });
-    } catch (error) {
-      return res.status(200).json({
-        success: false,
-        errors: JSON.stringify(error),
-      });
-    }
-  } else {
-    return res.status(200).json({
+    });
+  } catch (err) {
+    return res.status(500).json({
       success: false,
-      errors: new Error("Nothing for update")
+      errors: JSON.stringify(error),
     });
   }
 }
