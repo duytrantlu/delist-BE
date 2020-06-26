@@ -219,6 +219,7 @@ exports.exportData = function (req, res, next) {
 exports.updateOrders = function (req, res, next) {
   const errors = [];
   const { orders } = req.body;
+  console.log("==req.body==", req.body);
   if (orders.length) {
     try {
       orders.forEach(function (order) {
