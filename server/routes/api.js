@@ -65,6 +65,10 @@ router.get('/orders', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), ord
 
 router.put('/orders', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), orderController.updateOrders);
 
+// PUT REMOVE TRACKING
+router.put('/remove/tracking', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), orderController.removeElementTracking);
+
+
 router.get('/export/orders', authCheck([Roles.admin, Roles.siteAdmin, Roles.user]), orderController.exportData);
 
 // Dashboard get Infor

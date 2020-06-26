@@ -219,8 +219,29 @@ exports.exportData = function (req, res, next) {
 exports.updateOrders = function (req, res, next) {
   const { orders } = req.body;
   try {
-    console.log("==orders==", orders);
     Order.findOneAndUpdate({ $and: [{ id: orders.id }, { number: orders.number }] }, { $push: { tracking_number: orders.tracking } }, function (err, rs) {
+      if (err) return res.status(200).json({
+        success: false,
+        errors: JSON.stringify(err),
+      });
+      return res.status(200).json({
+        success: true,
+        rs,
+      });
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      errors: JSON.stringify(error),
+    });
+  }
+}
+
+exports.removeElementTracking = function (req, res, next) {
+  const { order } = req.body;
+  console.log("===order remove===", order);
+  try {
+    Order.findOneAndUpdate({ $and: [{ id: order.id }, { number: order.number }] }, { $pull: { tracking_number: order.tracking.tracking_id } }, function (err, rs) {
       if (err) return res.status(200).json({
         success: false,
         errors: JSON.stringify(err),
