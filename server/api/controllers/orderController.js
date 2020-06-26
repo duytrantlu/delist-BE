@@ -219,7 +219,7 @@ exports.exportData = function (req, res, next) {
 exports.updateOrders = function (req, res, next) {
   const { orders } = req.body;
   try {
-    Order.findOneAndUpdate({ $and: [{ id: orders.id }, { number: orders.number }] }, { $push: { tracking_number: orders.tracking } }, function (err, rs) {
+    Order.findOneAndUpdate({ $and: [{ id: orders.id }, { number: orders.number }] }, { $push: { tracking_number: orders.tracking } , $set:{shipped: 1}}, function (err, rs) {
       if (err) return res.status(200).json({
         success: false,
         errors: JSON.stringify(err),
