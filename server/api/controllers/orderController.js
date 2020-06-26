@@ -219,6 +219,7 @@ exports.exportData = function (req, res, next) {
 exports.updateOrders = function (req, res, next) {
   const { orders } = req.body;
   try {
+    console.log("==orders==", orders);
     Order.findOneAndUpdate({ $and: [{ id: orders.id }, { number: orders.number }] }, { $push: { tracking_number: orders.tracking } }, function (err, rs) {
       if (err) return res.status(200).json({
         success: false,
