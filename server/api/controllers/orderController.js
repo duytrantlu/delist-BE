@@ -135,6 +135,7 @@ function handleTracking(tracking) {
 }
 
 function formatCsvData(csvData) {
+  console.log("=csvData==", csvData);
   if (!csvData.length) return [];
   return csvData.map(csv => {
     return {
@@ -209,6 +210,7 @@ exports.exportData = function (req, res, next) {
       const rs = formatCsvData(result)
       return res.status(200).json(rs);
     } catch (error) {
+      console.log("===err===", error)
       return res.status(200).json({
         success: false,
         errors: [JSON.stringify(error)]
