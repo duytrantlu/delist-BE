@@ -129,7 +129,7 @@ exports.listOrder = function (req, res, next) {
 function handleTracking(tracking) {
   let str = '';
   tracking.forEach(t => {
-    str += `${t.tracking_provider ? t.tracking_provider : ''} ${t.tracking_number ? t.tracking_number : ''} ${t.date_shipped ? t.date_shipped : ''}} \n`
+    str += `${t.tracking_provider ? t.tracking_provider : ''} ${t.tracking_number ? t.tracking_number : ''} ${t.date_shipped ? t.date_shipped : ''} \n`
   });
   return str;
 }
@@ -208,7 +208,6 @@ exports.exportData = function (req, res, next) {
       const rs = formatCsvData(result)
       return res.status(200).json(rs);
     } catch (error) {
-      console.log("===error===", error);
       return res.status(200).json({
         success: false,
         errors: [JSON.stringify(error)]
