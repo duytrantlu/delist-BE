@@ -127,9 +127,9 @@ exports.listOrder = function (req, res, next) {
 }
 
 function handleTracking(tracking) {
-  console.log("===tracking===", tracking);
   let str = '';
   tracking.forEach(t => {
+    console.log("===tracking===", t);
     t += `${t.provider ? t.provider : ''} ${t.number ? t.number : ''} ${date ? date : ''} ${t.status ? t.status : ''} \n`
   });
   return str;
