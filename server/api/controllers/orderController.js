@@ -129,8 +129,7 @@ exports.listOrder = function (req, res, next) {
 function handleTracking(tracking) {
   let str = '';
   tracking.forEach(t => {
-    console.log("===tracking===", t);
-    t += `${t.provider ? t.provider : ''} ${t.number ? t.number : ''} ${date ? date : ''} ${t.status ? t.status : ''} \n`
+    t += `${t.tracking_provider ? t.tracking_provider : ''} ${t.tracking_number ? t.tracking_number : ''} ${t.date_shipped ? t.date_shipped : ''}} \n`
   });
   return str;
 }
