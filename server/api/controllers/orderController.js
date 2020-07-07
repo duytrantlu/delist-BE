@@ -196,6 +196,7 @@ exports.exportData = function (req, res, next) {
   } catch (err) {
     console.log('[List Order] Could not parse \'filter\' param ' + err);
   }
+  console.log("===filterOptions===", filterOptions);
   Order.find(filterOptions, (err, result) => {
     if (err) {
       console.log(err);
