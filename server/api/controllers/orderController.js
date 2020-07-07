@@ -127,6 +127,7 @@ exports.listOrder = function (req, res, next) {
 }
 
 function handleTracking(tracking) {
+  console.log("===tracking===", tracking);
   let str = '';
   tracking.forEach(t => {
     t += `${t.provider ? t.provider : ''} ${t.number ? t.number : ''} ${date ? date : ''} ${t.status ? t.status : ''} \n`
@@ -208,6 +209,7 @@ exports.exportData = function (req, res, next) {
       const rs = formatCsvData(result)
       return res.status(200).json(rs);
     } catch (error) {
+      console.log("===error===", error);
       return res.status(200).json({
         success: false,
         errors: [JSON.stringify(error)]
